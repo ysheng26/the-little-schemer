@@ -113,6 +113,7 @@
 ;; insertL
 ;; subst
 ;; subst2
+;; multirember
 
 
 ;; Write the function lat? using some, but not
@@ -214,3 +215,25 @@
          ((or (eq? (car xs) o1) (eq? (car xs) o2)) (cons new (cdr xs)))
          (else
           (cons (car xs) (subst2 new o1 o2 (cdr xs)))))))))
+
+
+(define multirember
+  (lambda (a xs)
+    (cond
+      ((null? xs) '())
+      (else
+       (cond
+         ((eq? (car xs) a) (multirember a (cdr xs)))
+         (else (cons (car xs) (multirember a (cdr xs)))))))))
+
+
+
+
+
+
+
+
+
+
+
+       
