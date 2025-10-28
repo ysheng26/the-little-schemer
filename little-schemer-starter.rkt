@@ -114,6 +114,7 @@
 ;; subst
 ;; subst2
 ;; multirember
+;; multiinsertR
 
 
 ;; Write the function lat? using some, but not
@@ -227,9 +228,16 @@
          (else (cons (car xs) (multirember a (cdr xs)))))))))
 
 
+(define multiinsertR
+  (lambda (new old xs)
+    (cond
+      ((null? xs) '())
+      (else
+       (cond
+         ((eq? (car xs) old) (cons old (cons new (multiinsertR new old (cdr xs)))))
+         (else (cons (car xs) (multiinsertR new old (cdr xs)))))))))
 
-
-
+; next multiinsertL
 
 
 
