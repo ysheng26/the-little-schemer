@@ -173,7 +173,8 @@
               ((eq? (car xs) old) (cons old (cons new (cdr xs))))
               (else (cons (car xs) (insertR new old (cdr xs)))))))))
 
-(define insertL
+
+(define insertLOld
   (lambda (new old xs)
     (cond
       ((null? xs) '())
@@ -181,6 +182,15 @@
              ((eq? (car xs) old) (cons new (cons old (cdr xs))))
              (else (cons (car xs) (insertL new old (cdr xs)))))))))
 
+
+
+(define insertL
+  (lambda (new old xs)
+    (cond
+      ((null? xs) '())
+      (else (cond
+             ((eq? (car xs) old) (cons new xs))
+             (else (cons (car xs) (insertL new old (cdr xs)))))))))
 
 
 
