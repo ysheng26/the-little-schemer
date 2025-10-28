@@ -111,6 +111,8 @@
 ;; firsts
 ;; insertR
 ;; insertL
+;; subst
+;; subst2
 
 
 ;; Write the function lat? using some, but not
@@ -193,4 +195,22 @@
              (else (cons (car xs) (insertL new old (cdr xs)))))))))
 
 
+(define subst
+  (lambda (new old xs)
+    (cond
+      ((null? xs) '())
+      (else
+       (cond
+         ((eq? (car xs) old) (cons new (cdr xs)))
+         (else (cons (car xs) (subst new old (cdr xs)))))))))
 
+
+(define subst2
+  (lambda (new o1 o2 xs)
+    (cond
+      ((null? xs) '())
+      (else
+       (cond
+         ((or (eq? (car xs) o1) (eq? (car xs) o2)) (cons new (cdr xs)))
+         (else
+          (cons (car xs) (subst2 new o1 o2 (cdr xs)))))))))
