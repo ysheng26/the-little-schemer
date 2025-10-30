@@ -90,6 +90,7 @@
 ;; where as (define xs '(a))
 ;; (eq? xs xs) returns true because these are the *exact* lists
 
+
 ;; chapter one summary
 ;; atom
 ;; list
@@ -101,9 +102,11 @@
 ;; atom?
 ;; eq?
 
+
 ;; chapter two summary
 ;; lat?
 ;; member?
+
 
 ;; chapter three summary
 ;; rember
@@ -116,6 +119,16 @@
 ;; multirember
 ;; multiinsertR
 ;; multiinsertL
+
+
+;; chapter four summary
+;; zero?
+;; add1
+;; sub1
+;; plus
+;; minus
+;; addtup
+;; mul
 
 
 ;; Write the function lat? using some, but not
@@ -249,7 +262,46 @@
          (else (cons (car xs) (multiinsertL new old (cdr xs)))))))))
 
 
+(define add1
+  (lambda (x)
+    (+ x 1)))
 
 
+(define sub1
+  (lambda (x)
+    (- x 1)))
 
-       
+
+(define myplus
+  (lambda (a b)
+    (cond
+      ((zero? b) a)
+      (else (myplus (add1 a) (sub1 b))))))
+
+
+(define plus
+  (lambda (a b)
+    (cond
+      ((zero? b) a)
+      (else (add1 (plus a (sub1 b)))))))
+
+
+(define minus
+  (lambda (a b)
+    (cond
+      ((zero? b) a)
+      (else (sub1 (minus a (sub1 b)))))))
+
+
+(define addtup
+  (lambda (tup)
+    (cond
+      ((null? tup) 0)
+      (else (plus (car tup) (addtup (cdr tup)))))))
+
+
+(define mul
+  (lambda (m n)
+    (cond
+      ((zero? n) 0)
+      (else (plus m (mul m (sub1 n)))))))
