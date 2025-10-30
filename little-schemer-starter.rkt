@@ -129,7 +129,7 @@
 ;; minus
 ;; addtup
 ;; mul
-;; tupplus
+;; tup+
 
 
 ;; Write the function lat? using some, but not
@@ -308,11 +308,13 @@
       (else (plus m (mul m (sub1 n)))))))
 
 
-(define tupplus
+(define tup+
   (lambda (xs ys)
     (cond
       ((and (null? xs) (null? ys)) '())
-      (else (cons (plus (car xs) (car ys)) (tupplus (cdr xs) (cdr ys)))))))
+      ((null? ys) xs)
+      ((null? xs) ys)
+      (else (cons (plus (car xs) (car ys)) (tup+ (cdr xs) (cdr ys)))))))
 
 
 
