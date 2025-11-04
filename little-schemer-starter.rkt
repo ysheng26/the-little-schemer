@@ -133,6 +133,7 @@
 ;; >
 ;; <
 ;; =
+;; pow
 
 
 ;; Write the function lat? using some, but not
@@ -360,4 +361,11 @@
       (else #t))))
 
 
-  
+(define pow
+  (lambda (x y)
+    (cond
+      ((zero? y) 1)
+      (else
+       (mul x (pow x (sub1 y)))))))
+
+
