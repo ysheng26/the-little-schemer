@@ -130,6 +130,9 @@
 ;; addtup
 ;; mul
 ;; tup+
+;; >
+;; <
+;; =
 
 
 ;; Write the function lat? using some, but not
@@ -317,6 +320,44 @@
       (else (cons (plus (car xs) (car ys)) (tup+ (cdr xs) (cdr ys)))))))
 
 
+(define >
+  (lambda (a b)
+    (cond
+      ((zero? a) #f)
+      ((zero? b) #t)
+      (else (> (sub1 a) (sub1 b))))))
+
+
+(define <
+  (lambda (a b)
+    (cond
+      ((zero? b) #f)
+      ((zero? a) #t)
+      (else (< (sub1 a) (sub1 b))))))
 
 
 
+(define notusingltorgt=
+  (lambda (a b)
+    (cond
+      ((zero? a) (zero? b))
+      ((zero? b) (zero? a))
+      (else (= (sub1 a) (sub1 b))))))
+
+
+(define my=
+  (lambda (a b)
+    (cond
+      ((and (not (< a b)) (not (> a b))))
+      (else #f))))
+
+
+(define =
+  (lambda (a b)
+    (cond
+      ((< a b) #f)
+      ((> a b) #f)
+      (else #t))))
+
+
+  
