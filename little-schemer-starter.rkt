@@ -134,6 +134,13 @@
 ;; <
 ;; =
 ;; pow
+;; div
+;; length
+;; pick
+;; rempick
+;; number?
+;; no-nums
+;; all-nums
 
 
 ;; Write the function lat? using some, but not
@@ -368,4 +375,73 @@
       (else
        (mul x (pow x (sub1 y)))))))
 
+(define div
+  (lambda (x y)
+    (cond
+      ((< x y) 0)
+      (else
+       (add1 (div (minus x y) y))))))
 
+
+(define length
+  (lambda (xs)
+    (cond
+      ((null? xs) 0)
+      (else
+       (add1 (length (cdr xs)))))))
+      
+
+(define mypick
+  (lambda (i xs)
+    (cond
+      ((eq? i 1) (car xs))
+      (else
+       (mypick (sub1 i) (cdr xs))))))
+       
+
+(define pick
+  (lambda (i xs)
+    (cond
+      ((zero? (sub1 i)) (car xs))
+      (else
+       (pick (sub1 i) (cdr xs))))))
+
+
+(define rempick
+  (lambda (i xs)
+    (cond
+      ((zero? (sub1 i)) (cdr xs))
+      (else
+       (cons (car xs) (rempick (sub1 i) (cdr xs)))))))
+
+
+(define no-nums
+  (lambda (xs)
+    (cond
+      ((null? xs) '())
+      (else
+       (cond
+         ((number? (car xs)) (no-nums (cdr xs)))
+         (else
+          (cons (car xs) (no-nums (cdr xs)))))))))
+
+
+(define all-nums
+  (lambda (xs)
+    (cond
+      ((null? xs) '())
+      (else
+       (cond
+         ((number? (car xs)) (cons (car xs) (all-nums (cdr xs))))
+         (else
+          (all-nums (cdr xs))))))))
+
+
+
+
+
+
+
+
+
+              
