@@ -141,6 +141,8 @@
 ;; number?
 ;; no-nums
 ;; all-nums
+;; eqan?
+;; occur
 
 
 ;; Write the function lat? using some, but not
@@ -437,11 +439,27 @@
           (all-nums (cdr xs))))))))
 
 
+(define myeqan?
+  (lambda (x y)
+    (cond
+      ((and (number? x) (number? y)) (= x y))
+      (else (eq? x y)))))
 
 
+(define eqan?
+  (lambda (x y)
+    (cond
+      ((and (number? x) (number? y)) (= x y))
+      ((or (number? x) (number? y)) #f)
+      (else (eq? x y)))))
 
 
-
-
-
+(define occur
+  (lambda (x xs)
+    (cond
+      ((null? xs) 0)
+      (else
+       (cond
+         ((eq? (car xs) x) (add1 (occur x (cdr xs))))
+         (else (occur x (cdr xs))))))))
               
