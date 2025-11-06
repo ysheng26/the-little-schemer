@@ -143,6 +143,7 @@
 ;; all-nums
 ;; eqan?
 ;; occur
+;; one?
 
 
 ;; Write the function lat? using some, but not
@@ -409,7 +410,7 @@
        (pick (sub1 i) (cdr xs))))))
 
 
-(define rempick
+(define old_rempick
   (lambda (i xs)
     (cond
       ((zero? (sub1 i)) (cdr xs))
@@ -462,4 +463,53 @@
        (cond
          ((eq? (car xs) x) (add1 (occur x (cdr xs))))
          (else (occur x (cdr xs))))))))
-              
+
+
+(define myone?
+  (lambda (x)
+    (cond
+      ((and (number? x) (eq? x 1)) #t)
+      (else #f))))
+
+
+(define long_one?
+  (lambda (x)
+    (cond
+      (else (= x 1)))))
+
+
+(define one?
+  (lambda (x)
+    (= x 1)))
+
+
+
+(define rempick
+  (lambda (i xs)
+    (cond
+      ((one? i) (cdr xs))
+      (else
+       (cons (car xs) (rempick (sub1 i) (cdr xs)))))))
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
