@@ -146,6 +146,11 @@
 ;; one?
 
 
+;; chapter five summary
+;; rember*
+;; insertR*
+
+
 ;; Write the function lat? using some, but not
 ;; necessarily all, of the following functions:
 ;; car cdr cons null? atom ? and eq?
@@ -492,12 +497,28 @@
        (cons (car xs) (rempick (sub1 i) (cdr xs)))))))
 
 
+(define rember*
+  (lambda (x xs)
+    (cond
+      ((null? xs) '())
+      ((atom? (car xs))
+        (cond
+          ((eq? x (car xs)) (rember* x (cdr xs)))
+          (else (cons (car xs) (rember* x (cdr xs))))))
+      (else (cons (rember* x (car xs)) (rember* x (cdr xs)))))))
 
 
-
-
-
-
+(define insertR*
+  (lambda (new old xs)
+    (cond
+      ((null? xs) '())
+      ((atom? (car xs))
+       (cond
+         ((eq? (car xs) old) (cons old (cons new (insertR* new old (cdr xs)))))
+         (else
+          (cons (car xs) (insertR* new old (cdr xs))))))
+      (else
+       (cons (insertR* new old (car xs)) (insertR* new old (cdr xs)))))))
 
 
 
