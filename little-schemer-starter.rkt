@@ -149,6 +149,10 @@
 ;; chapter five summary
 ;; rember*
 ;; insertR*
+;; occur*
+;; subst*
+;; insertL*
+;; member*
 
 
 ;; Write the function lat? using some, but not
@@ -514,19 +518,51 @@
       ((null? xs) '())
       ((atom? (car xs))
        (cond
-         ((eq? (car xs) old) (cons old (cons new (insertR* new old (cdr xs)))))
+         ((eq? (car xs) old)
+          (cons old (cons new (insertR* new old (cdr xs)))))
          (else
           (cons (car xs) (insertR* new old (cdr xs))))))
       (else
        (cons (insertR* new old (car xs)) (insertR* new old (cdr xs)))))))
 
 
+(define occur*
+  (lambda (x xs)
+    (cond
+      ((null? xs) 0)
+      ((atom? (car xs))
+       (cond
+         ((eq? (car xs) x) (add1 (occur* x (cdr xs))))
+         (else (occur* x (cdr xs)))))
+      (else
+       (plus (occur* x (car xs)) (occur* x (cdr xs)))))))
 
 
+(define subst*
+  (lambda (new old xs)
+    (cond
+      ((null? xs) '())
+      ((atom? (car xs))
+       (cond
+         ((eq? (car xs) old) (cons new (subst* new old (cdr xs))))
+         (else (cons (car xs) (subst* new old (cdr xs))))))
+      (else
+       (cons (subst* new old (car xs)) (subst* new old (cdr xs)))))))
 
 
+(define insertL*
+  (lambda (new old xs)
+    (cond
+      ((null? xs) '())
+      ((atom? (car xs))
+       (cond
+         ((eq? (car xs) old) (cons new (cons old (insertL* new old (cdr xs)))))
+         (else (cons (car xs) (insertL* new old (cdr xs))))))
+      (else
+       (cons (insertL* new old (car xs)) (insertL* new old (cdr xs)))))))
 
-
+(display
+   (insertL* 'x 'a '((a c) a (a (b a) c) c)))
 
 
 
