@@ -595,6 +595,94 @@
       ((atom? (car xs)) (car xs))
       (else (leftmost (car xs))))))
 
+;; xs, ys
+;; empty, empty
+;; empty, atom
+;; empty, non atom
+;; atom, empty
+;; atom, atom
+;; atom, non atom
+;; non atom, empty
+;; non atom, atom
+;; non atom, non atom
+(define eqlistdetailed?
+  (lambda (xs ys)
+    (cond
+      ;; empty, emtpy
+      ((and (null? xs) (null? ys)) #t)
+      ;; empty, atom
+      ((and (null? xs) (atom? (car ys))) #f)
+      ;; empty, non atom
+      ((null? xs) #f)
+      ;; atom, empty
+      ((and (atom? (car xs)) (null? ys)) #f)
+      ;; atom, atom
+      ((and (atom? (car xs)) (atom? (car ys)))
+         (and (eqan? (car xs) (car ys)) (eqlistdetailed? (cdr xs) (cdr ys))))
+      ;; atom, non atom
+      ((atom? (car xs)) #f)
+      ;; non atom, empty
+      ((null? ys) #f)
+      ;; non atom, atom
+      ((atom? ys) #f)
+      ;; non atom, non atom
+      (else
+       (and (eqlistdetailed? (car xs) (car ys)) (eqlistdetailed? (cdr xs) (cdr ys)))))))
+
+;; xs, ys
+;; empty, empty
+;; empty, atom
+;; empty, non atom
+;; atom, empty
+;; atom, atom
+;; atom, non atom
+;; non atom, empty
+;; non atom, atom
+;; non atom, non atom
+(define eqlist?
+  (lambda (xs ys)
+    (cond
+      ;; empty, empty
+      ((and (null? xs) (null? ys)) #t)
+      ;; empty, atom
+      ;; empty, non atom
+      ;; atom, empty
+      ;; non atom, empty
+      ((or (null? xs) (null? ys)) #f)
+      ;; atom, atom
+      ((and (atom? (car xs)) (atom? (car ys)))
+       (and (eqan? (car xs) (car ys)) (eqlist? (cdr xs) (cdr ys))))
+      ;; atom, non atom
+      ;; non atom, atom
+      ;; NOTE: the (atom, empty) and (empty, atom) was covered above
+      ((or (atom? (car xs)) (atom? (car ys))) #f)
+      (else
+       (and (eqlist? (car xs) (car ys)) (eqlist? (cdr xs) (cdr ys)))))))
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
