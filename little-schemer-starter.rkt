@@ -561,10 +561,39 @@
       (else
        (cons (insertL* new old (car xs)) (insertL* new old (cdr xs)))))))
 
-(display
-   (insertL* 'x 'a '((a c) a (a (b a) c) c)))
+
+(define mymember*
+  (lambda (x xs)
+    (cond
+      ((null? xs) #f)
+      ((atom? (car xs))
+       (cond
+         ((eq? (car xs) x) #t)
+         (else (mymember* x (cdr xs)))))
+      (else
+       (or (mymember* x (car xs)) (mymember* x (cdr xs)))))))
 
 
+(define member*
+  (lambda (x xs)
+    (cond
+      ((null? xs) #f)
+      ((atom? (car xs))
+       (or (eq? (car xs) x) (member* x (cdr xs))))
+      (else
+       (or (member* x (car xs)) (member* x (cdr xs)))))))
+
+;; (define xs '((potato) (chips ((with) fish) (chips))))
+;; (displayln (member* 'chips xs))
+
+;; The function leftmost finds the leftmost
+;; atom in a non-empty list of S-expressions
+;; that does not contain the empty list.
+(define leftmost
+  (lambda (xs)
+    (cond
+      ((atom? (car xs)) (car xs))
+      (else (leftmost (car xs))))))
 
 
 
