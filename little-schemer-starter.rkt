@@ -153,6 +153,9 @@
 ;; subst*
 ;; insertL*
 ;; member*
+;; leftmost
+;; eqlist?
+;; equal?
 
 
 ;; Write the function lat? using some, but not
@@ -659,9 +662,28 @@
       (else
        (and (eqlist? (car xs) (car ys)) (eqlist? (cdr xs) (cdr ys)))))))
 
+;; atom or list
+;; x, y
+;; atom, atom
+;; atom, list
+;; list, atom
+;; list, list
+(define equal?
+  (lambda (x y)
+    (cond
+      ((and (atom? x) (atom? y)) (eqan? x y))
+      ((or (atom? x) (atom? y)) #f)
+      (else (eqlist2? x y)))))
+    
 
-
-
+(define eqlist2?
+  (lambda (xs ys)
+    (cond
+      ((and (null? xs) (null? ys)) #t)
+      ((or (null? xs) (null? ys)) #f)
+      (else
+       (and (equal? (car xs) (car ys))
+            (eqlist2? (cdr xs) (cdr ys)))))))
 
 
 
