@@ -156,6 +156,8 @@
 ;; leftmost
 ;; eqlist?
 ;; equal?
+;; equal? using eqlist? and eqlist? using equal?
+;; rember using equal? to remove member of s-expressions
 
 
 ;; Write the function lat? using some, but not
@@ -686,6 +688,27 @@
             (eqlist2? (cdr xs) (cdr ys)))))))
 
 
+(define rember_s
+  (lambda (s l)
+    (cond
+      ((null? l) '())
+      (else
+       (cond
+         ((equal? (car l) s) (cdr l))
+         (else (cons (car l) (rember_s s (cdr l)))))))))
+
+         
+ 
+(define rember_s2
+  (lambda (s l)
+    (cond
+      ((null? l) '())
+      ((equal? (car l) s) (cdr l))
+         (else (cons (car l) (rember_s2 s (cdr l)))))))
+
+         
+       
+      
 
 
 
