@@ -160,6 +160,11 @@
 ;; rember using equal? to remove member of s-expressions
 
 
+;; chater six summary
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 ;; Write the function lat? using some, but not
 ;; necessarily all, of the following functions:
 ;; car cdr cons null? atom ? and eq?
@@ -706,16 +711,79 @@
       ((equal? (car l) s) (cdr l))
          (else (cons (car l) (rember_s2 s (cdr l)))))))
 
+
+;; the book used symbols but I used names
+;; plus
+;; minus
+;; mul
+;; pow
+;; div
+
+;; numbered? is a function that determines whether a
+;; representation of an arithmetic expression
+;; contains only numbers besides the plus, mul and pow
+;; a plus b
+;; a mul b
+;; a pow b
+
+(define numbereddetailed?
+  (lambda (aexp)
+    (cond
+      ((atom? aexp) (number? aexp))
+      ((eq? (car (cdr aexp)) 'plus)
+       (and (numbereddetailed? (car aexp))
+            (numbereddetailed? (car (cdr (cdr aexp))))))
+      ((eq? (car (cdr aexp)) 'mul)
+       (and (numbereddetailed? (car aexp))
+            (numbereddetailed? (car (cdr (cdr aexp))))))
+      ((eq? (car (cdr aexp)) 'pow)
+       (and (numbereddetailed? (car aexp))
+            (numbereddetailed? (car (cdr (cdr aexp))))))
+      (else #f))))
+
+;; (display (numbereddetailed? '(2 pow ((2 mul 3) plus 2))))
+
+;; this doesn't check the operator though
+;; the book says
+;;   Since aexp was already understood to be an
+;;   arithmetic expression, could we have written
+;;   numbered? in a simpler way?
+;; I guess it's a given
+(define numbered?
+  (lambda (aexp)
+    (cond
+      ((atom? aexp) (number? aexp))
+      (else (and (numbered? (car aexp))
+            (numbered? (car (cdr (cdr aexp)))))))))
+
+
+
+(define myvalue
+  (lambda (nexp)
+    (cond
+      ((atom? nexp) nexp)
+      ((and (numbered? (car nexp))
+            (numbered? (car (cdr (cdr nexp)))))
+       (cond
+         ((eq? (car (cdr nexp)) 'plus)
+          (plus (myvalue (car nexp)) (myvalue (car (cdr (cdr nexp))))))
+         ((eq? (car (cdr nexp)) 'mul)
+          (mul (myvalue (car nexp)) (myvalue (car (cdr (cdr nexp))))))
+         ((eq? (car (cdr nexp)) 'pow)
+          (pow (myvalue (car nexp)) (myvalue (car (cdr (cdr nexp)))))))))))
          
-       
-      
 
-
-
-
-
-
-
+(define value
+  (lambda (nexp)
+    (cond
+      ((atom? nexp) nexp)
+      ((eq? (car (cdr nexp)) 'plus)
+       (plus (value (car nexp)) (value (car (cdr (cdr nexp))))))
+      ((eq? (car (cdr nexp)) 'mul)
+       (mul (value (car nexp)) (value (car (cdr (cdr nexp))))))
+      (else
+       (pow (value (car nexp)) (value (car (cdr (cdr nexp)))))))))
+         
 
 
 
