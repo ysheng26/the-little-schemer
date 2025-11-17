@@ -161,7 +161,8 @@
 
 
 ;; chater six summary
-
+;; set?
+;; makeset, makeset2
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -811,10 +812,31 @@
        (pow (value2 (1st-sub-exp nexp)) (value2 (2nd-sub-exp nexp)))))))
 
 
+(define set?
+  (lambda (xs)
+    (cond
+      ((null? xs) #t)
+      ((member? (car xs) (cdr xs)) #f)
+      (else (set? (cdr xs))))))
 
 
+;; xs is '(a b a a)
+(define makeset
+  (lambda (xs)
+    (cond
+      ((null? xs) '())
+      ((member? (car xs) (cdr xs)) (makeset (cdr xs)))
+      (else (cons (car xs) (makeset (cdr xs)))))))
 
 
+;; write makeset with multirember
+(define makeset2
+  (lambda (xs)
+    (cond
+      ((null? xs) '())
+      (else
+       (cons (car xs)
+             (makeset2 (multirember (car xs) (cdr xs))))))))
 
 
 
