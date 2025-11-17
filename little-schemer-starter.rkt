@@ -785,8 +785,30 @@
        (pow (value (car nexp)) (value (car (cdr (cdr nexp)))))))))
          
 
+;; (+ 1 2)
+(define 1st-sub-exp
+  (lambda (aexp)
+    (car (cdr aexp))))
+
+(define 2nd-sub-exp
+  (lambda (aexp)
+    (car (cdr (cdr aexp)))))
+
+(define operator
+  (lambda (aexp)
+    (car aexp)))
 
 
+(define value2
+  (lambda (nexp)
+    (cond
+      ((atom? nexp) nexp)
+      ((eq? (operator nexp) 'plus)
+       (plus (value2 (1st-sub-exp nexp)) (value2 (2nd-sub-exp nexp))))
+      ((eq? (operator nexp) 'mul)
+       (mul (value2 (1st-sub-exp nexp)) (value2 (2nd-sub-exp nexp))))
+      ((eq? (operator nexp) 'pow)
+       (pow (value2 (1st-sub-exp nexp)) (value2 (2nd-sub-exp nexp)))))))
 
 
 
