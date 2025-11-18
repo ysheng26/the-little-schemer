@@ -163,6 +163,12 @@
 ;; chater six summary
 ;; set?
 ;; makeset, makeset2
+;; subset?
+;; eqset?
+;; intersect?
+;; intersect
+;; union
+;; setdiff
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -837,6 +843,130 @@
       (else
        (cons (car xs)
              (makeset2 (multirember (car xs) (cdr xs))))))))
+
+
+
+(define subset?
+  (lambda (xs ys)
+    (cond
+      ((null? xs) #t)
+      (else
+       (cond
+         ((member? (car xs) ys) (subset? (cdr xs) ys))
+         (else #f))))))
+
+
+(define subset?_shorter
+  (lambda (xs ys)
+    (cond
+      ((null? xs) #t)
+      ((member? (car xs) ys) (subset?_shorter (cdr xs) ys))
+      (else #f))))
+       
+
+
+(define subset?_withand
+  (lambda (xs ys)
+    (cond
+      ((null? xs) #t)
+      (else
+       (and (member? (car xs) ys) (subset?_withand (cdr xs) ys))))))
+
+
+
+(define myeqset?
+  (lambda (xs ys)
+    (cond
+      ((and (null? xs) (null? ys)) #t)
+      ((null? xs) #f)
+      ((null? ys) #f)
+      (else
+       (and
+        (member? (car xs) ys)
+        (myeqset? (cdr xs) (rember (car xs) ys)))))))
+
+
+;; (eqset? '(b a b) '(b a)) returns #t
+;; but I guess this is because the params are supposed to be sets
+(define eqset?
+  (lambda (xs ys)
+    (cond
+      ((and (subset? xs ys)
+            (subset? ys xs))))))
+
+
+
+(define intersect?
+  (lambda (xs ys)
+    (cond
+      ((null? xs) #t)
+      (else
+       (or (member? (car xs) ys) (intersect? (cdr xs) ys))))))
+
+
+(define intersect
+  (lambda (xs ys)
+    (cond
+      ((null? xs) '())
+      ((member? (car xs) ys) (cons (car xs) (intersect (cdr xs) ys)))
+      (else (intersect (cdr xs) ys)))))
+
+
+(define union
+  (lambda (xs ys)
+    (cond
+      ((null? xs) ys)
+      ((member? (car xs) ys) (union (cdr xs) ys))
+      (else
+       (cons (car xs) (union (cdr xs) ys))))))
+
+
+;; returns elements in xs but not in ys
+(define setdiff
+  (lambda (xs ys)
+    (cond
+      ((null? xs) '())
+      ((member? (car xs) ys) (setdiff (cdr xs) ys))
+      (else
+       (cons (car xs) (setdiff (cdr xs) ys))))))
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
