@@ -169,6 +169,8 @@
 ;; intersect
 ;; union
 ;; setdiff
+;; intersectall
+;; a-pair?
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -941,6 +943,14 @@
 (displayln (intersectall '((a b) (b c) (b d))))
 
 
+(define a-pair?
+  (lambda (xs)
+    (cond
+      ((atom? xs) #f)
+      ((null? xs) #f)
+      ((null? (cdr xs) #f))
+      ((null? (cdr (cdr xs)) #f))
+      (else #t))))
 
 
 
