@@ -931,7 +931,14 @@
        (cons (car xs) (setdiff (cdr xs) ys))))))
 
 
+(define intersectall
+  (lambda (xxs)
+    (cond
+      ((null? (cdr xxs)) (car xxs)) ;; if last set then return itself
+      (else
+       (intersect (car xxs) (intersectall (cdr xxs)))))))
 
+(displayln (intersectall '((a b) (b c) (b d))))
 
 
 
