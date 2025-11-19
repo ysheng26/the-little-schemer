@@ -182,6 +182,10 @@
 ;; one-to-one?
 
 
+;; chater six summary
+;; rember-f
+
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;; Write the function lat? using some, but not
@@ -1052,8 +1056,15 @@
     (fun? (revrel fun))))
 
 
+(define rember-f
+  (lambda (test? x xs)
+    (cond
+      ((null? xs) '())
+      ((test? x (car xs)) (cdr xs)) ;; no recursion here means it stops after first remove
+      (else (cons (car xs) (rember-f test? x (cdr xs)))))))
 
-
+;; (displayln (rember-f equal? '(1 2) '(1 2 3 (1 2) 4)))
+;; (displayln (rember-f equal? '1 '(1 2 3 (1 2) 4)))
 
 
 
