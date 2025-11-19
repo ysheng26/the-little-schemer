@@ -171,6 +171,16 @@
 ;; setdiff
 ;; intersectall
 ;; a-pair?
+;; first
+;; second
+;; build
+;; third
+;; fun?
+;; revrel
+;; fullfun?
+;; seconds
+;; one-to-one?
+
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -240,8 +250,8 @@
     (cond
       ((null? xs) '())
       (else (cond
-             ((eq? (car xs) old) (cons new (cons old (cdr xs))))
-             (else (cons (car xs) (insertL new old (cdr xs)))))))))
+              ((eq? (car xs) old) (cons new (cons old (cdr xs))))
+              (else (cons (car xs) (insertL new old (cdr xs)))))))))
 
 
 
@@ -250,8 +260,8 @@
     (cond
       ((null? xs) '())
       (else (cond
-             ((eq? (car xs) old) (cons new xs))
-             (else (cons (car xs) (insertL new old (cdr xs)))))))))
+              ((eq? (car xs) old) (cons new xs))
+              (else (cons (car xs) (insertL new old (cdr xs)))))))))
 
 
 (define subst
@@ -525,9 +535,9 @@
     (cond
       ((null? xs) '())
       ((atom? (car xs))
-        (cond
-          ((eq? x (car xs)) (rember* x (cdr xs)))
-          (else (cons (car xs) (rember* x (cdr xs))))))
+       (cond
+         ((eq? x (car xs)) (rember* x (cdr xs)))
+         (else (cons (car xs) (rember* x (cdr xs))))))
       (else (cons (rember* x (car xs)) (rember* x (cdr xs)))))))
 
 
@@ -637,7 +647,7 @@
       ((and (atom? (car xs)) (null? ys)) #f)
       ;; atom, atom
       ((and (atom? (car xs)) (atom? (car ys)))
-         (and (eqan? (car xs) (car ys)) (eqlistdetailed? (cdr xs) (cdr ys))))
+       (and (eqan? (car xs) (car ys)) (eqlistdetailed? (cdr xs) (cdr ys))))
       ;; atom, non atom
       ((atom? (car xs)) #f)
       ;; non atom, empty
@@ -718,7 +728,7 @@
     (cond
       ((null? l) '())
       ((equal? (car l) s) (cdr l))
-         (else (cons (car l) (rember_s2 s (cdr l)))))))
+      (else (cons (car l) (rember_s2 s (cdr l)))))))
 
 
 ;; the book used symbols but I used names
@@ -763,7 +773,7 @@
     (cond
       ((atom? aexp) (number? aexp))
       (else (and (numbered? (car aexp))
-            (numbered? (car (cdr (cdr aexp)))))))))
+                 (numbered? (car (cdr (cdr aexp)))))))))
 
 
 
@@ -940,7 +950,7 @@
       (else
        (intersect (car xss) (intersectall (cdr xss)))))))
 
-(displayln (intersectall '((a b) (b c) (b d))))
+;; (displayln (intersectall '((a b) (b c) (b d))))
 
 
 (define a-pair?
@@ -953,30 +963,93 @@
       (else #t))))
 
 
+(define first
+  (lambda (p)
+    (cond
+      (else (car p)))))
 
 
+(define second
+  (lambda (p)
+    (cond
+      (else (car (cdr p))))))
 
 
+(define build
+  (lambda (x y)
+    (cond
+      (else (cons x (cons y '()))))))
 
 
+(define third
+  (lambda (xs)
+    (cond
+      (else (car (cdr (cdr xs)))))))
 
 
+;; a relation is a set of pairs
+;; a fun is a function
+;; gemini: A relation in which the first element of each pair is unique.
+;; gemini: fun stands for finite function
+
+;; write fun? with set? and firsts
+(define fun?
+  (lambda (rel)
+    (set? (firsts rel))))
+;; (displayln (fun? '((2 1) (2 3))))
+
+;; revrel reverse pairs in the relation
+(define revrel
+  (lambda (rel)
+    (cond
+      ((null? rel) '())
+      (else
+       (cons (build (second (car rel)) (first (car rel)))
+             (revrel (cdr rel)))))))
+
+;; (displayln (revrel '((1 2) (2 3) (3 4))))
+
+(define revpair
+  (lambda (p)
+    (cond
+      (else (build (second p) (first p))))))
 
 
+(define revrel2
+  (lambda (rel)
+    (cond
+      ((null? rel) '())
+      (else
+       (cons (revpair (car rel)) (revrel2 (cdr rel)))))))
+;; (displayln (revrel2 '((1 2) (2 3) (3 4))))
 
 
+;; gemini: A fullfun is a fun where the second element of every pair is unique.
+(define myfullfun?
+  (lambda (fun)
+    (and (fun? fun) (fun? (revrel fun)))))
 
+;; (displayln (myfullfun? '((1 2) (2 3))))
+;; (displayln (myfullfun? '((1 2) (3 2))))
 
+(define seconds
+  (lambda (rel)
+    (cond
+      ((null? rel) '())
+      (cons (second (car rel)) (seconds (cdr rel))))))
 
+;; don't really need to check if it's a fun or not
+;; if it's not a fullfun it can't be a fun
+(define fullfun?
+  (lambda (fun)
+    (set? (seconds fun))))
 
+;; (displayln (myfullfun? '((1 2) (3 2))))
 
-
-
-
-
-
-
-
+;; another name of fullfun? is one-to-one?
+(define one-to-one?
+  (lambda (fun)
+    (fun? (revrel fun))))
 
 
 
