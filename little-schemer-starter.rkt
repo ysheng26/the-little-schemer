@@ -220,10 +220,10 @@
           
 
 (define firsts
-  (lambda (xxs)
+  (lambda (xss)
     (cond
-      ((null? xxs) '())
-      (else (cons (car (car xxs)) (firsts (cdr xxs)))))))
+      ((null? xss) '())
+      (else (cons (car (car xss)) (firsts (cdr xss)))))))
 
 
 (define insertR
@@ -934,11 +934,11 @@
 
 
 (define intersectall
-  (lambda (xxs)
+  (lambda (xss)
     (cond
-      ((null? (cdr xxs)) (car xxs)) ;; if last set then return itself
+      ((null? (cdr xss)) (car xss)) ;; if last set then return itself
       (else
-       (intersect (car xxs) (intersectall (cdr xxs)))))))
+       (intersect (car xss) (intersectall (cdr xss)))))))
 
 (displayln (intersectall '((a b) (b c) (b d))))
 
