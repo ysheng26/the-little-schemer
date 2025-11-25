@@ -1067,11 +1067,109 @@
 ;; (displayln (rember-f equal? '1 '(1 2 3 (1 2) 4)))
 
 
+(define eq?-c
+  (lambda (a)
+    (lambda (x)
+      (eq? x a))))
 
 
+(define eq?-salad (eq?-c 'salad))
+
+((eq?-c 'salad) 'tuna)
 
 
+(define rember-f2
+  (lambda (test?)
+    (lambda (x xs)
+      (cond
+        ((null? xs) '())
+        ((test? (car xs) x) (cdr xs))
+        (else (cons (car xs) ((rember-f2 test?) x (cdr xs))))))))
+
+;; (displayln ((rember-f2 eq?) 'a '(b a c)))
 
 
+(define insertL-f
+  (lambda (test?)
+    (lambda (new old xs)
+      (cond
+        ((null? xs) '())
+        ((test? (car xs) old) (cons new (cons old (cdr xs))))
+        (else (cons old ((insertL-f test?) new old (cdr xs))))))))
+
+;; (displayln ((insertL-f eq?) 'z 'a '(b a c)))
+
+(define insertR-f
+  (lambda (test?)
+    (lambda (new old xs)
+      (cond
+        ((null? xs) '())
+        ((test? (car xs) old) (cons old (cons new (cdr xs))))
+        (else (cons (car xs) ((insertR-f test?) new old (cdr xs))))))))
+
+;; (displayln ((insertR-f eq?) 'z 'b '(a b c)))
 
 
+(define my-insert-g
+  (lambda (test?)
+    (lambda (left-or-right)
+      (lambda (new old xs)
+        (cond
+          ((null? xs) '())
+          ((test? (car xs) old)
+           (cond
+             ((eq? left-or-right 'left)
+              (cons new (cons old (cdr xs))))
+             (else ;; right
+              (cons old (cons new (cdr xs))))))
+          (else
+           (cons (car xs)
+                 (((my-insert-g test?) left-or-right) new old (cdr xs)))))))))
+
+
+(define seqL
+  (lambda (new old xs)
+    (cons new (cons old xs))))
+
+
+(define seqR
+  (lambda (new old xs)
+    (cons old (cons new xs))))
+
+
+(define insert-g
+  (lambda (seq)
+    (lambda (new old xs)
+      (cond
+        ((null? xs) '())
+        ((eq? (car xs) old) (seq new old (cdr xs)))
+        (else (cons (car xs) ((insert-g seq) new old (cdr xs))))))))
+
+;; (displayln ((insert-g seqL) 'z 'a '(d b c a)))
+;; (displayln ((insert-g seqR) 'z 'a '(d b c a)))
+
+(define insertL2 (insert-g seqL))
+(define insertR2 (insert-g seqR))
+
+(define insertL3
+  (insert-g (lambda (new old xs)
+              (cons new old xs))))
+
+(define insertR3
+  (insert-g (lambda (new old xs)
+              (cons old new xs))))
+
+
+(define subst3
+  (lambda (new old xs)
+    (cond
+      ((null? xs) '())
+      ((eq? (car xs) old) (cons new (cdr xs)))
+      (else (cons (car xs) (subst3 new old (cdr xs)))))))
+
+
+(define seqS ;; S for substitute
+  (lambda (new old xs)
+    (cons new xs)))
+
+(define subst4 (insert-g seqS))
