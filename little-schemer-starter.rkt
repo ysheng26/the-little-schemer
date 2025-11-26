@@ -1173,3 +1173,121 @@
     (cons new xs)))
 
 (define subst4 (insert-g seqS))
+
+
+(define seqrem
+  (lambda (new old xs) xs))
+
+(define yyy
+  (lambda (x xs)
+    ((insert-g seqrem) #f x xs)))
+
+;; #f is the placeholder for unused args
+
+
+(define atom-to-function
+  (lambda (x)
+    (cond
+      ((eq? x 'plus) plus)
+      ((eq? x 'mul) mul)
+      (else pow))))
+
+;; (displayln (operator '(plus 5 3)))
+;; (displayln (atom-to-function (operator '(plus 5 3))))
+
+
+
+(define value3
+  (lambda (nexp)
+    (cond
+      ((atom? nexp) nexp)
+      (else
+       ((atom-to-function (operator nexp))
+        (value3 (1st-sub-exp nexp)) (value3 (2nd-sub-exp nexp)))))))
+
+;; (displayln (value3 '(plus (mul 2 3) (pow 2 3))))
+
+
+(define multirember-f
+  (lambda (test?)
+    (lambda (a xs)
+      (cond
+        ((null? xs) '())
+        ((test? (car xs) a) ((multirember-f test?) a (cdr xs)))
+        (else (cons (car xs) ((multirember-f test?) a (cdr xs))))))))
+
+;; (displayln ((multirember-f eq?) 'x '(a x b x x c d x x)))
+
+
+;; (define eq?-x (lambda (x) (eq? x 'x)))
+(define eq?-x (eq?-c 'x))
+
+
+(define multiremberT
+  (lambda (test? xs)
+    (cond
+      ((null? xs) '())
+      ((test? (car xs)) (multiremberT test? (cdr xs)))
+      (else (cons (car xs) (multiremberT test? (cdr xs)))))))
+
+;; (displayln (multiremberT eq?-x '(a x b x x c d x x)))
+
+
+(define a-friend
+  (lambda (x y)
+    (null? y)))
+
+;; page 138
+;; not crystal clear
+
+;; It looks at every atom of the lat to see
+;; whether it is eq? to a. Those atoms that are
+;; not are collected in one list ls1; the others
+;; for which the answer is true are collected in a
+;; second list ls2 . Finally, it determines the
+;; value of (f ls1 ls2).
+(define multirember&co
+  (lambda (a lat col)
+    (cond
+      ((null? lat)
+       (col '() '()))
+      ((eq? (car lat) a)
+       (multirember&co a
+                       (cdr lat)
+                       (lambda (newlat seen)
+                         (col newlat
+                              (cons (car lat) seen)))))
+      (else
+       (multirember&co a
+                       (cdr lat)
+                       (lambda (newlat seen)
+                         (col (cons (car lat) newlat)
+                              seen)))))))
+
+(displayln (multirember&co 'tuna '() a-friend))
+(displayln (multirember&co 'tuna '(tuna) a-friend))
+
+(define last-friend
+  (lambda (x y)
+    (length x)))
+
+(displayln
+ (multirember&co 'tuna '(strawberries tuna and swordfish) last-friend))
+           
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
