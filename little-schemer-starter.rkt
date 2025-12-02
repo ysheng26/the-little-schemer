@@ -1271,13 +1271,51 @@
   (lambda (x y)
     (length x)))
 
+;; (last-friend '(strawberries and swordfish) '(tuna))
+;;
+;; (last-friend '() '())
+;;    (last-friend '(strawberries and swordfish) '(tuna))
 (displayln
  (multirember&co 'tuna '(strawberries tuna and swordfish) last-friend))
            
 
 
+(define multiinsertLR
+  (lambda (new oldL oldR xs)
+    (cond
+      ((null? xs) '())
+      ((eq? (car xs) oldL)
+       (cons new (cons oldL (multiinsertLR new oldL oldR (cdr xs)))))
+      ((eq? (car xs) oldR)
+       (cons oldR (cons new (multiinsertLR new oldL oldR (cdr xs)))))
+      (else
+       (cons (car xs) (multiinsertLR new oldL oldR (cdr xs)))))))
 
 
+;; base case is the trigger, calls col with base case
+;; newlat is the list prepared by one level below and passed to current col (which is you)
+;; do what you need to do at this level and call col with your result
+;; final result comes out from tier-0 collector
+(define multiinsertLR&co
+  (lambda (new oldL oldR lat col)
+    (cond
+      ((null? lat) (col '() 0 0))
+      ((eq? (car lat) oldL)
+       (multiinsertLR&co new oldL oldR (cdr lat)
+                         (lambda (newlat L R)
+                           (col (cons new (cons oldL newlat)) (add1 L) R))))
+      ((eq? (car lat) oldR)
+       (multiinsertLR&co new oldL oldR (cdr lat)
+                         (lambda (newlat L R)
+                           (col (cons oldR (cons new newlat)) L (add1 R)))))
+      (else
+       (multiinsertLR&co new oldL oldR (cdr lat)
+                         (lambda (newlat L R)
+                           (col (cons (car lat) newlat) L R)))))))
+
+(displayln
+ (multiinsertLR&co 'x 'a 'b '(c c a c b a)
+                   (lambda (newlat L R) newlat)))
 
 
 
