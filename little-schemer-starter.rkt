@@ -1318,6 +1318,83 @@
                    (lambda (newlat L R) newlat)))
 
 
+(define even?
+  (lambda (n)
+    (= (mul (div n 2) 2) n)))
+
+
+(define evens-only*
+  (lambda (xs)
+    (cond
+      ((null? xs) '())
+      ((atom? (car xs))
+       (cond
+         ((even? (car xs)) (cons (car xs) (evens-only* (cdr xs))))
+         (else (evens-only* (cdr xs)))))
+      (else
+       (cons (evens-only* (car xs)) (evens-only* (cdr xs)))))))
+
+;;(displayln
+;; (evens-only* '((9 1 2 8) 3 10 ((9 9) 7 6) 2)))
+
+
+;; Can you write the function evens-only*&co
+;; It builds a nested list of even numbers by
+;; removing the odd ones from its argument
+;; and simultaneously multiplies the even
+;; numbers and sums up the odd numbers that
+;; occur in its argument.
+
+(define evens-only*&co
+  (lambda (xs k) ;; k should have (newxs, evenproduct, oddsum)
+    (cond
+      ((null? xs) (k '() 1 0))
+      ((atom? (car xs))
+       (cond
+         ((even? (car xs))
+          (evens-only*&co (cdr xs)
+                          (lambda (newxs evenproduct oddsum)
+                            (k (cons (car xs) newxs)
+                               (mul (car xs) evenproduct)
+                               oddsum))))
+         (else (evens-only*&co (cdr xs)
+                               (lambda (newxs evenproduct oddsum)
+                                 (k newxs
+                                    evenproduct
+                                    (plus (car xs) oddsum)))))))
+      (else
+       (evens-only*&co (car xs)
+                       (lambda (al ap as)
+                         (evens-only*&co (cdr xs)
+                                         (lambda (dl dp ds)
+                                           (k (cons al dl)
+                                              (mul ap dp)
+                                              (plus as ds))))))))))
+
+
+(displayln '-------------------)
+(define the-last-friend
+  (lambda ( newl product sum)
+    ( cons sum
+           ( cons product
+                  newl))))
+(displayln
+ (evens-only*&co '((9 1 2 8) 3 10 ((9 9) 7 6) 2)
+                 the-last-friend))
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
