@@ -1580,12 +1580,16 @@
 ;; le is the "length-like" function
 ;; (the logic of length without the recursion part).
 
+;; f is the Blueprint
+;; g is the Generator
+
 ;; 1. Define Y (The Engine)
 (define Y
-  (lambda (le)
-    ((lambda (f) (f f))
-     (lambda (f)
-       (le (lambda (x) ((f f) x)))))))
+  (lambda (f)
+    ((lambda (g) (g g))
+     (lambda (g)
+       (f (lambda (x) ((g g) x)))))))
+
 
 ;; 2. Define the Blueprint (The Logic)
 (define mk-length
@@ -1602,9 +1606,10 @@
 ;; Result: 3
 
 ;; python
-;; Y = lambda le: (lambda f: f(f))(lambda f: le(lambda x: f(f)(x)))
+;; Y = lambda f: (lambda g: g(g))(lambda g: f(lambda x: g(g)(x)))
 ;; mklength = lambda length: lambda xs: 0 if len(xs) == 0 else 1 + length(xs[1:])
 ;; print(Y(mklength)([1,2,3]))
+
 
 
 
