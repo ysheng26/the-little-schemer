@@ -1383,15 +1383,223 @@
                  the-last-friend))
 
 
+;; mine is wrong because it does not return #f
+;; need to remember using number?
+(define mykeep-looking
+  (lambda (x i xs)
+    (cond
+      ((eq? (pick i xs) x) #t)
+      (else (mykeep-looking x (pick i xs) xs)))))
+
+
+(define keep-looking
+  (lambda (x sorn xs) ;; sorn means symbol or number
+    (cond
+      ((number? sorn) (keep-looking x (pick sorn xs) xs))
+      (else (eq? sorn x)))))
+
+
+(define looking
+  (lambda (x xs)
+    (keep-looking x (pick 1 xs) xs)))
+
+
+(displayln (looking 'caviar '(6 2 4 caviar 5 7 3)))
+
+
+;; shift takes a pair whose first component is a pair
+(define shift
+  (lambda (pair)
+    (build (first (first pair))
+           (build (second (first pair))
+                  (second pair)))))
+
+
+;; not 100% what does this do
+;; pora means pair or atom
+(define align
+  (lambda (pora)
+    (cond
+      ((atom? pora) pora)
+      ((a-pair? (first pora))
+       (align (shift pora)))
+      (else (build (first pora)
+                   (align (second pora)))))))
+
+
+(define length*
+  (lambda (pora)
+    (cond
+      ((atom? pora) 1)
+      (else
+       (plus (length* (first pora))
+             (length* (second pora)))))))
+
+
+(define weight*
+  (lambda (pora)
+    (cond
+      ((atom? pora) 1)
+      (else
+       (plus (mul (weight* (first pora)) 2)
+             (weight* (second pora)))))))
+
+
+(define shuffle
+  (lambda (pora)
+    (cond
+      ((atom? pora) pora)
+      ((a-pair? (first pora))
+       (shuffle (revpair pora)))
+      (else
+       (build (first pora)
+              (shuffle (second pora)))))))
 
 
 
+;; book code
+
+(define eternity
+  (lambda (x)
+    (eternity x)))
+
+((lambda (mk-length)
+   (mk-length eternity))
+ (lambda (length)
+   (lambda (l)
+     (cond
+       ((null? l) 0)
+       (else (add1 (length (cdr l))))))))
+
+
+((lambda (mk-length)
+   (mk-length
+    (mk-length eternity)))
+ (lambda (length)
+   (lambda (l)
+     (cond
+       ((null? l) 0)
+       (else (add1 (length (cdr l))))))))
+
+
+((lambda (mk-length)
+   (mk-length mk-length))
+ (lambda (length)
+   (lambda (l)
+     (cond
+       ((null? l) 0)
+       (else (add1
+               (length (cdr l))))))))
+
+
+((lambda (mk-length)
+   (mk-length mk-length))
+ (lambda (mk-length)
+   (lambda (l)
+     (cond
+       ((null? l) 0)
+       (else (add1 (mk-length (cdr l))))))))
+
+
+(displayln
+ (((lambda (mk-length)
+     (mk-length mk-length))
+   (lambda (mk-length)
+     (lambda (l)
+       (cond
+         ((null? l) 0)
+         (else (add1
+                ((mk-length eternity)
+                 (cdr l))))))))
+  '(apples)))
 
 
 
+;; gemini explaination
+(define lengthdemo
+  (lambda (l)
+    (cond
+      ((null? l) 0)
+      (else (add1 (lengthdemo (cdr l))))))) ;; <--- LOOK! We use the name 'length' inside itself!
+
+;; length0
+(lambda (l)
+  (cond
+    ((null? l) 0)
+    (else (add1 (eternity (cdr l))))))
+
+
+;; length1
+(lambda (l)
+  (cond
+    ((null? l) 0)
+    (else (add1
+           ;; This internal lambda is length0
+           ((lambda (l)
+              (cond
+                ((null? l) 0)
+                (else (add1 (eternity (cdr l))))))
+            (cdr l))))))
 
 
 
+((lambda (length)
+   (lambda (l)
+     (cond
+       ((null? l) 0)
+       (else (add1 (length (cdr l)))))))
+ eternity) ;; Pass eternity as the first 'length'
+
+
+
+((lambda (mk-length)
+   (mk-length mk-length)) ;; <--- 1. Start the engine by passing it to itself
+ (lambda (mk-length)
+   (lambda (l)
+     (cond
+       ((null? l) 0)
+       (else (add1
+              ;; 2. To recurse, we call (mk-length mk-length) again!
+              ((mk-length mk-length) (cdr l))))))))
+
+
+;; The Infinite Loop Issue (Applicative Order)
+;; In Scheme (unlike Haskell),
+;; arguments are evaluated before the function runs.
+;; If you run (mk-length mk-length),
+;; it tries to evaluate the result immediately,
+;; which leads to an infinite loop before it ever touches the list l.
+;; 
+;; The Fix: Wrap the recursive call in a lambda.
+;; Instead of (mk-length mk-length),
+;; we say: (lambda (x) ((mk-length mk-length) x))
+;; This "delays" the execution until we actually have an argument x
+;; (the next part of the list).
+
+;; What is le?
+;; le is the "length-like" function
+;; (the logic of length without the recursion part).
+
+;; 1. Define Y (The Engine)
+(define Y
+  (lambda (le)
+    ((lambda (f) (f f))
+     (lambda (f)
+       (le (lambda (x) ((f f) x)))))))
+
+;; 2. Define the Blueprint (The Logic)
+(define mk-length
+  (lambda (length)
+    (lambda (l)
+      (cond
+        ((null? l) 0)
+        (else (add1 (length (cdr l))))))))
+
+;; 3. THE CALLER CODE
+;; First, we create the recursive function: (Y mk-length)
+;; Then, we immediately apply it to a list: '(a b c)
+((Y mk-length) '(a b c))
+;; Result: 3
 
 
 
