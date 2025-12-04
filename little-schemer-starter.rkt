@@ -1601,7 +1601,10 @@
 ((Y mk-length) '(a b c))
 ;; Result: 3
 
-
+;; python
+;; Y = lambda le: (lambda f: f(f))(lambda f: le(lambda x: f(f)(x)))
+;; mklength = lambda length: lambda xs: 0 if len(xs) == 0 else 1 + length(xs[1:])
+;; print(Y(mklength)([1,2,3]))
 
 
 
