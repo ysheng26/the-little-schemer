@@ -796,16 +796,16 @@
           (pow (myvalue (car nexp)) (myvalue (car (cdr (cdr nexp)))))))))))
          
 
-(define value
+(define valueold
   (lambda (nexp)
     (cond
       ((atom? nexp) nexp)
       ((eq? (car (cdr nexp)) 'plus)
-       (plus (value (car nexp)) (value (car (cdr (cdr nexp))))))
+       (plus (valueold (car nexp)) (valueold (car (cdr (cdr nexp))))))
       ((eq? (car (cdr nexp)) 'mul)
-       (mul (value (car nexp)) (value (car (cdr (cdr nexp))))))
+       (mul (valueold (car nexp)) (valueold (car (cdr (cdr nexp))))))
       (else
-       (pow (value (car nexp)) (value (car (cdr (cdr nexp)))))))))
+       (pow (valueold (car nexp)) (valueold (car (cdr (cdr nexp)))))))))
          
 
 ;; (+ 1 2)
@@ -1658,6 +1658,99 @@
       (else (lookup-in-entry name (car table)
                              (lambda (name)
                                (lookup-in-table name (cdr table) table-f)))))))
+
+
+
+(define *const
+  (lambda (e table)
+    (cond
+      ((number? e) e)
+      ((eq? e #t) #t)
+      ((eq? e #f) #f)
+      (else (build 'primitive e)))))
+
+
+(define text-of second)
+
+
+(define initial-table
+  (lambda (name)
+    (car '())))
+
+
+(define *lambda
+  (lambda (e table)
+    (build 'non-primitive
+           (cons table (cdr e)))))
+
+
+(define table-of first)
+
+(define formals-of second)
+
+(define body-of third)
+
+(define *identifier
+  (lambda (e table)
+    (lookup-in-table e table initial-table)))
+
+
+(define *quote
+  (lambda (e table)
+    (text-of e)))
+
+
+(define atom-to-action
+  (lambda (e)
+    (cond
+      ((number? e) *const)
+      ((eq? e #t) *const)
+      ((eq? e #f) *const)
+      ((eq? e 'cons) *const)
+      ((eq? e 'car) *const)
+      ((eq? e 'cdr) *const)
+      ((eq? e 'null?) *const)
+      ((eq? e 'eq?) *const)
+      ((eq? e 'atom?) *const)
+      ((eq? e 'zero?) *const)
+      ((eq? e 'add1) *const)
+      ((eq? e 'sub1) *const)
+      ((eq? e 'number?) *const)
+      (else *identifier))))
+
+
+(define list-to-action
+  (lambda (e)
+    (cond
+      ((atom? (car e))
+       (cond
+         ((eq? (car e) 'quote) *quote)
+         ((eq? (car e) 'lambda) *lambda)
+         ((eq? (car e) 'cond) *cond)
+         (else *application)))
+      (else *application))))
+
+
+(define expression-to-action
+  (lambda (e)
+    (cond
+      ((atom? e) (atom-to-action e))
+      (else (list-to-action e)))))
+
+
+(define meaning
+  (lambda (e)
+    ((expression-to-action e) e table)))
+
+
+(define value
+  (lambda (e)
+    (meaning e ('())))) ;; '() is the empty table, the environment
+
+
+;; (display (meaning '(lambda (x) (cons x y)) (( (y z) ((8) 9)))))
+
+
 
 
 
