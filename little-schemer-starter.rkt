@@ -1750,6 +1750,60 @@
 
 ;; (display (meaning '(lambda (x) (cons x y)) (( (y z) ((8) 9)))))
 
+(define else?
+  (lambda (x)
+    (cond
+      ((atom? x) (eq? x 'else))
+      (else #f))))
+
+
+(define question-of first)
+
+(define answer-of second)
+
+(define evcon
+  (lambda (lines table)
+    (cond
+      ((else? (question-of (car lines)))
+       (meaning (answer-of (car lines)) table))
+      ((meaning (question-of (car lines)) table)
+       (meaning (answer-of (car lines)) table))
+      (else (evcon (cdr lines) table)))))
+
+
+(define cond-lines-of cdr)
+
+(define *cond
+  (lambda (e table)
+    (evcon (cond-lines-of e) table)))
+
+
+;; (*cond '(cond (coffee klatsch) (else party))
+;;        (((coffee) (#t))
+;;         ((klatsch party) (5 (6)))))
+
+
+;; Write a function evlis that takes a list of
+;; (representations of) arguments and a table,
+;; and returns a list composed of the meaning
+;; of each argument.
+
+(define evlis
+  (lambda (arguments table)
+    (cond
+      ((null? arguments) '())
+      (else (cons (meaning (car arguments) table)
+                  (evlis (cdr arguments) table))))))
+
+
+(define function-of car)
+(define arguments-of cdr)
+
+(define *application
+  (lambda (e table)
+    (apply
+     (meaning (function-of e) table)
+     (evlis (arguments-of e) table))))
 
 
 
