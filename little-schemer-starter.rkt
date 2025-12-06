@@ -1805,6 +1805,63 @@
      (meaning (function-of e) table)
      (evlis (arguments-of e) table))))
 
+(define primitive
+  (lambda (l)
+    (eq? (first l) 'primitive)))
+
+(define non-primitive
+  (lambda (l)
+    (eq? (first l) 'non-primitive)))
+
+;; I didn't do this for (5) below instead I just used atom?
+;; I think using atom? directly is wrong because it's not
+;; handling 'primitive and 'non-primitive
+;; in other words atom? only handles scheme but not our scheme representation
+(define :atom?
+  (lambda (x)
+    (cond
+      ((atom? x) #t)
+      ((null? x) #f)
+      ((eq? (car x) 'primitive) #t)
+      ((eq? (car x) 'non-primitive #t))
+      (else #f))))
+
+
+(define apply-primitive
+  (lambda (name vals)
+    (cond
+      ((eq? name 'cons) ;1
+       (cons (first vals) (second vals)))
+      ((eq? name 'car)
+       (car (first vals)))
+      ((eq? name 'cdr)
+       (cdr (first vals))) ;2
+      ((eq? name 'null?)
+       ((null? (first vals))))
+      ((eq? name 'eq?)
+       (eq? (first vals) (second vals))) ;3 4
+      ((eq? name 'atom?)
+       (:atom? (first vals))) ;5
+      ((eq? name 'zero?)
+       (zero? (first vals)))
+      ((eq? name 'add1)
+       (add1 (first vals)))
+      ((eq? name 'sub1)
+       (sub1 (first vals)))
+      ((eq? name 'number?)
+       (number? (first vals))))))
+
+
+; fun here would be something like '(primitive car)
+; vals would be the parameters
+(define apply
+  (lambda (fun vals)
+    (cond
+      ((primitive? fun)
+       (apply-primitive (second fun) vals))
+      ((non-primitive? fun)
+       (apply-closure (second fun) vals)))))
+
 
 
 
