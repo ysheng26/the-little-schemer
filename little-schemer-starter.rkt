@@ -1739,13 +1739,13 @@
 
 
 (define meaning
-  (lambda (e)
+  (lambda (e table)
     ((expression-to-action e) e table)))
 
 
 (define value
   (lambda (e)
-    (meaning e ('())))) ;; '() is the empty table, the environment
+    (meaning e '()))) ;; '() is the empty table, the environment
 
 
 ;; (display (meaning '(lambda (x) (cons x y)) (( (y z) ((8) 9)))))
@@ -1801,9 +1801,10 @@
 
 (define *application
   (lambda (e table)
-    (apply
+    (interpreter-apply
      (meaning (function-of e) table)
      (evlis (arguments-of e) table))))
+
 
 (define primitive
   (lambda (l)
@@ -1852,9 +1853,17 @@
        (number? (first vals))))))
 
 
+(define primitive?
+  (lambda (l)
+    (eq? (first l) 'primitive)))
+
+(define non-primitive?
+  (lambda (l)
+    (eq? (first l) 'non-primitive)))
+
 ; fun here would be something like '(primitive car)
 ; vals would be the parameters
-(define apply
+(define interpreter-apply
   (lambda (fun vals)
     (cond
       ((primitive? fun)
@@ -1863,12 +1872,50 @@
        (apply-closure (second fun) vals)))))
 
 
+(define apply-closure
+     (lambda (closure vals)
+       (meaning (body-of closure)
+                (extend-table
+                 (new-entry (formals-of closure) vals)
+              (table-of closure)))))
 
 
+(displayln "testing out interpreter")
+
+; 7
+(displayln (value '(add1 6)))                           
+
+; '(a b c)
+(displayln (value '(quote (a b c))))
+(displayln (value ''(a b c)))
+
+; 'a
+(displayln (value '(car (quote (a b c)))))
+
+; '(b c)
+(displayln (value '(cdr (quote (a b c)))))
+(displayln (value '(cdr '(a b c))))
+
+; '((foo bar baz))
+(displayln
+ (value
+  '((lambda (x)
+      (cons x (quote ())))
+    (quote (foo bar baz)))))
+
+; 'true
+(displayln 
+ (value
+  '((lambda (x)
+      (cond
+        (x (quote true))
+        (else
+         (quote false))))
+    #t)))                                   
 
 
-
-
-
-
-
+(displayln
+ (value
+  '((lambda (x)
+      (cons x (quote ())))
+    (quote (foo bar baz)))))
